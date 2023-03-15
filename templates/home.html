@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Form</title>
+</head>
+<body>
+    <h1>My Form</h1>
+    <form method="post" action="{% url 'home' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="image">Image:</label>
+        <input type="file" id="image" name="image">
+        <br>
+        <label for="text">Text:</label>
+        <textarea id="message" name="text" rows="4" cols="40"></textarea>
+        <br>
+        <label for="date">Choose a date:</label>
+          <input type="date" id="date" name="date">
+
+          <label for="time">Choose a time:</label>
+          <input type="time" id="time" name="time">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
