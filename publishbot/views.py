@@ -1,51 +1,138 @@
 import tweepy
 from datetime import datetime
 
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import render
 
 from publishbot.connection_settings import twitter_connect
-from publishbot.models import Tweet
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from models import Publication, Event, Configuration
+from serializers import PublicationSerializer, EventSerializer, ConfigurationSerializer
+
 
 
 def home(request):
-    if request.method == 'POST':
-        image = request.FILES['image']
-        text = request.POST['text']
-        date = request.POST['date']
-        time = request.POST['time']
-        print(f"date {date}")
-        print(f"time {time}")
-        datetime_obj = datetime.strptime(date + " " + time, '%Y-%m-%d %H:%M')
-
-        new_object = Tweet(image=image, text=text, tweet_time=datetime_obj)
-        new_object.save()
-
-        return render(request, 'home.html')
-    else:
-        return render(request, 'home.html')
+    pass
 
 
-def send_tweet(request):
-    image_path = None
-    api = twitter_connect()
-    if not api:
-        pass
-        # return http error
+class PublicationList(APIView):
+    def get(self, request, format=None):
+        publications = Publication.objects.all()
+        serializer = PublicationSerializer(publications, many=True)
+        return Response(serializer.data)
 
-    try:
-        # Upload the image
-        media = api.media_upload(image_path)
+    def post(self, request, format=None):
+        serializer = PublicationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Post a tweet with the image
-        tweet = "Check out this image!"
-        post_result = api.update_status(status=tweet, media_ids=[media.media_id])
+class PublicationDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Publication.objects.get(pk=pk)
+        except Publication.DoesNotExist:
+            raise Http404
 
-        # Print the tweet URL
-        print(
-            f"Tweet posted successfully! URL: https://twitter.com/{post_result.user.screen_name}/status/{post_result.id}")
-    except tweepy.TweepError as e:
-        print(f"Error posting tweet: {e}")
+    def get(self, request, pk, format=None):
+        publication = self.get_object(pk)
+        serializer = PublicationSerializer(publication)
+        return Response(serializer.data)
 
-    response_data = {'message': 'Created successfully'}
-    return JsonResponse(response_data, status=201)
+    def put(self, request, pk, format=None):
+        publication = self.get_object(pk)
+        serializer = PublicationSerializer(publication, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        publication = self.get_object(pk)
+        publication.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class EventList(APIView):
+    def get(self, request, format=None):
+        events = Event.objects.all()
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class EventDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        event = self.get_object(pk)
+        serializer = EventSerializer(event)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        event = self.get_object(pk)
+        serializer = EventSerializer(event, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        event = self.get_object(pk)
+        event.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ConfigurationList(APIView):
+    def get(self, request, format=None):
+        configuration = Configuration.objects.all()
+        serializer = ConfigurationSerializer(configuration, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = ConfigurationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ConfigurationDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Configuration.objects.get(pk=pk)
+        except Configuration.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        configuration = self.get_object(pk)
+        serializer = ConfigurationSerializer(configuration)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        configuration = None
+
+
+"""
+API endpoints
+
+Publication CRUD
+
+Event CRUD
+
+Config CRUD
+
+send_publication
+
+send_publications
+"""
