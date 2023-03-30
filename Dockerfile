@@ -1,15 +1,17 @@
-FROM python:3.8.8
+FROM python:3.10.4-alpine3.15
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 
-WORKDIR /code
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN apk update \
+    && apk add --no-cache gcc musl-dev postgresql-dev python3-dev libffi-dev \
+    && pip install --upgrade pip
 
-COPY . /code/
+COPY ./requirements.txt ./
 
-# Falta el Command
+RUN pip install -r requirements.txt
 
-
+COPY ./ ./
+EXPOSE 80
+CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]

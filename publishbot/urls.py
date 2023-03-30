@@ -15,10 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from publishbot import views
+from rest_framework.authtoken.views import obtain_auth_token
+from publishbot.views import PublicationList, PublicationDetail, EventList, EventDetail, ConfigurationDetail
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.home, name="home"),
     path('api-auth/', include('rest_framework.urls')),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('publications/', PublicationList.as_view()),
+    path('publications/<int:pk>/', PublicationDetail.as_view()),
+    path('events/', EventList.as_view()),
+    path('events/<int:pk>/', EventDetail.as_view()),
+    path('configurations/<int:pk>/', ConfigurationDetail.as_view()),
 ]
