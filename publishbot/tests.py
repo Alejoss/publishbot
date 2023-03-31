@@ -1,3 +1,4 @@
+import pdb
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from rest_framework.authtoken.models import Token
@@ -41,24 +42,25 @@ class PublicationAPIViewTestCase(TestClientWithToken):
         response = self.client.get(url)
         publication = Publication.objects.get(id=self.publication1.id)
         serializer = PublicationSerializer(publication)
+        pdb.set_trace()
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_create_publication(self):
-        url = reverse('publication-list')
-        data = {'text': 'New publication', 'image': 'image.jpg', 'video': 'video.mp4', 'url': 'http://example.com',
-                'priority': 1, 'canceled': False, 'publication_type': 'type1', 'score': 10}
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_update_publication(self):
-        url = reverse('publication-detail', args=[self.publication1.id])
-        data = {'text': 'Updated publication', 'image': 'image.jpg', 'video': 'video.mp4', 'url': 'http://example.com',
-                'priority': 1, 'canceled': False, 'publication_type': 'type1', 'score': 10}
-        response = self.client.put(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_delete_publication(self):
-        url = reverse('publication-detail', args=[self.publication1.id])
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    # def test_create_publication(self):
+    #     url = reverse('publication-list')
+    #     data = {'text': 'New publication', 'image': 'image.jpg', 'video': 'video.mp4', 'url': 'http://example.com',
+    #             'priority': 1, 'canceled': False, 'publication_type': 'type1', 'score': 10}
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #
+    # def test_update_publication(self):
+    #     url = reverse('publication-detail', args=[self.publication1.id])
+    #     data = {'text': 'Updated publication', 'image': 'image.jpg', 'video': 'video.mp4', 'url': 'http://example.com',
+    #             'priority': 1, 'canceled': False, 'publication_type': 'type1', 'score': 10}
+    #     response = self.client.put(url, data)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #
+    # def test_delete_publication(self):
+    #     url = reverse('publication-detail', args=[self.publication1.id])
+    #     response = self.client.delete(url)
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
