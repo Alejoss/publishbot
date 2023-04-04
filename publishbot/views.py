@@ -1,3 +1,5 @@
+import pdb
+
 import tweepy
 from datetime import datetime
 
@@ -32,26 +34,19 @@ class PublicationList(APIView):
 
 
 class PublicationDetail(APIView):
-    def get_object(self, pk):
-        return get_object_or_404(Publication, pk=pk)
 
     def get(self, request, pk):
-        publication = self.get_object(pk)
+        publication = get_object_or_404(Publication, pk=pk)
         serializer = PublicationSerializer(publication)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        publication = self.get_object(pk)
+        publication = get_object_or_404(Publication, pk=pk)
         serializer = PublicationSerializer(publication, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        publication = self.get_object(pk)
-        publication.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class EventList(APIView):
@@ -69,26 +64,19 @@ class EventList(APIView):
 
 
 class EventDetail(APIView):
-    def get_object(self, pk):
-        return get_object_or_404(Event, pk=pk)
 
     def get(self, request, pk):
-        event = self.get_object(pk)
+        event = get_object_or_404(Event, pk=pk)
         serializer = EventSerializer(event)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        event = self.get_object(pk)
+        event = get_object_or_404(Event, pk=pk)
         serializer = EventSerializer(event, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        event = self.get_object(pk)
-        event.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ConfigurationDetail(APIView):

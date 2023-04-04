@@ -25,6 +25,6 @@ urlpatterns = [
     path('publications/', PublicationList.as_view(), name='publication-list'),
     path('publications/<int:pk>/', PublicationDetail.as_view(), name='publication-detail'),
     path('events/', EventList.as_view(), name='event-list'),
-    path('events/<int:pk>/', EventDetail.as_view(), name='publication-detail'),
+    path('events/<int:pk>/', EventDetail.as_view(), name='event-detail'),
     path('configurations/<int:pk>/', ConfigurationDetail.as_view(), name='configurations'),
 ]
